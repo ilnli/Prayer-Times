@@ -1,0 +1,16 @@
+package "ptimes"
+version "1.0"
+purpose "Islamic prayer times calculator"
+
+option "timezone" z "get prayer times for arbitrary timezone" float no
+option "latitude" l "latitude of desired location" float yes
+option "longitude" n "longitude of desired location" float yes
+option "calc-method" c "select prayer time calculation method" string no values="jafari","karachi","isna","mwl","makkah","egypt","custom"
+option "asr-juristic-method" a "select Juristic method for calculating Asr prayer time" string no values="shafii","hanafi"
+option "high-lats-method" i "select adjusting method for higher latituden" string no values="none","midnight","oneseventh","anglebased"
+option "dhuhr-minutes" - "minutes after mid-way for calculating Dhuhr prayer time" int no
+option "maghrib-minutes" - "minutes after sunset for calculating Maghrib prayer time" int no
+option "isha-minutes" - "minutes after Maghrib for calculating Isha prayer time" int no
+option "fajr-angle" - "angle for calculating Fajr prayer time" int no
+option "maghrib-angle" - "angle for calculating Maghrib prayer time" int no
+option "isha-angle" - "angle for calculating Isha prayer time" int no
