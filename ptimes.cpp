@@ -22,12 +22,14 @@
 #include <signal.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <fcntl.h>
 
 #include "cmdline.h"
 #include "prayertimes.hpp"
 
 #define DAEMON_NAME "ptimes"
 #define PID_FILE "/var/run/ptimes.pid"
+#define BUF_SIZE 256
 
 #define PLAYER "/usr/bin/alsaplayer"
 #define AZAN "/root/programs/ptimes/audio/Amazing-Azan.wav"
@@ -258,12 +260,9 @@ void play_azan() {
     }
 }
 
-int main(int argc, char *argv[])
-{
-    PrayerTimes prayer_times;
-	time_t date = time(NULL);
-    double timezone = NAN;
-    prayer_t next_prayer;
+void daemonize(void) {
+    int lfd, rc;
+    char buf[BUF_SIZE];
 
 #if defined(DEBUG)
     int daemonize = 0;
@@ -277,19 +276,15 @@ int main(int argc, char *argv[])
     signal(SIGINT, signal_handler);
     signal(SIGQUIT, signal_handler);
 
-    parse_cmdline(argc, argv);
-    set_prayer_options(&prayer_times, &date, &timezone);
 
-	if (isnan(opts->timezone_arg))
-		timezone = PrayerTimes::get_effective_timezone(date);
-
-
-    syslog(LOG_INFO, "%s daemon starting up with parameters timezone=%.1lf, latitude=%.5lf, longitude=%.5lf", 
-            DAEMON_NAME, opts->timezone_arg, opts->latitude_arg, opts->longitude_arg);
- 
     // Setup syslog logging - see SETLOGMASK(3)
+#if defined(DEBUG)
     setlogmask(LOG_UPTO(LOG_DEBUG));
     openlog(DAEMON_NAME, LOG_CONS | LOG_NDELAY | LOG_PERROR | LOG_PID, LOG_USER);
+#else
+    setlogmask(LOG_UPTO(LOG_INFO));
+    openlog(DAEMON_NAME, LOG_CONS | LOG_PID, LOG_USER);
+#endif
  
     /* Our process ID and Session ID */
     pid_t pid, sid;
@@ -323,31 +318,67 @@ int main(int argc, char *argv[])
             /* Log the failure */
             exit(EXIT_FAILURE);
         }
+
+        /* Run only once instance of the daemon */
+        lfd = open(PID_FILE, O_RDWR|O_CREAT, 0640);
+        if(lfd < 0) {
+            exit(EXIT_FAILURE);
+        }
+        if(lockf(lfd, F_TLOCK, 0) < 0) {
+            syslog(LOG_INFO, DAEMON_NAME" is already running, exiting");
+            exit(EXIT_FAILURE);
+        }
+        sprintf(buf, "%ld\n", (long) pid);
+        write(lfd, buf, strlen(buf));
  
         /* Close out the standard file descriptors */
         close(STDIN_FILENO);
         close(STDOUT_FILENO);
         close(STDERR_FILENO);
     }
+}
+
+
+int main(int argc, char *argv[])
+{
+    daemonize();
+
+    int last_prayer = -1;
+    PrayerTimes prayer_times;
+	time_t date = time(NULL);
+    double timezone = NAN;
+    prayer_t next_prayer;
+
+    parse_cmdline(argc, argv);
+    set_prayer_options(&prayer_times, &date, &timezone);
+
+	if (isnan(opts->timezone_arg))
+		timezone = PrayerTimes::get_effective_timezone(date);
+
+
+    syslog(LOG_INFO, "%s daemon starting up with parameters timezone=%.1lf, latitude=%.5lf, longitude=%.5lf", 
+            DAEMON_NAME, opts->timezone_arg, opts->latitude_arg, opts->longitude_arg);
  
-    //****************************************************
-    // TODO: Insert core of your daemon processing here
-    //****************************************************
  
     while(true) {
         if(get_next_prayer(&prayer_times, timezone, date, &next_prayer)) {
             syslog(LOG_INFO, "%s will be in %d minutes", TimeName[next_prayer.name_id], next_prayer.minutes);
-            sleep(next_prayer.minutes*60);
-            syslog(LOG_INFO, "Time for %s", TimeName[next_prayer.name_id]);
-            play_azan();    
+            /* 
+             * Wait till next prayer and if it's time for prayer sleep for 
+             * 1 second, so that we don't start utilizing too much CPU.
+             */
+            next_prayer.minutes == 0 ? sleep(1) : sleep(next_prayer.minutes*60);
+
+            /* Make sure we don't keep on alerting for same prayer in the loop */
+            if(last_prayer != next_prayer.name_id) {
+                syslog(LOG_INFO, "Time for %s", TimeName[next_prayer.name_id]);
+                play_azan();    
+                last_prayer = next_prayer.name_id;
+            }
         }
     }
 
     syslog(LOG_INFO, "%s daemon exiting", DAEMON_NAME);
- 
-    //****************************************************
-    // TODO: Free any allocated resources before exiting
-    //****************************************************
  
     cleanup();
     exit(0);
