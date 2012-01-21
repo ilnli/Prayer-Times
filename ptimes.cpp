@@ -64,7 +64,6 @@ typedef struct _prayer {
 } prayer_t;
 
 void signal_handler(int sig) {
-    exit(1);
     switch(sig) {
         case SIGHUP:
             syslog(LOG_WARNING, "Received SIGHUP signal.");
