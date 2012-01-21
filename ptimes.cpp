@@ -326,7 +326,7 @@ void daemonize(void) {
             exit(EXIT_FAILURE);
         }
         if(lockf(lfd, F_TLOCK, 0) < 0) {
-            syslog(LOG_INFO, DAEMON_NAME" is already running, exiting");
+            syslog(LOG_INFO, DAEMON_NAME" is already running");
             exit(EXIT_FAILURE);
         }
         sprintf(buf, "%ld\n", (long) sid);
