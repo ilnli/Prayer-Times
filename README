@@ -12,6 +12,9 @@ and sounds Azan when it's time for it.
 User must specify the location in terms of latitude and longitude for 
 which the Azan will be sounded on the correct time for that location.
 
+To find the latitude and longitude for an IP address, visit:
+http://www.ipfingerprints.com/
+
 The program can be compiled as:
 
 g++ -o ptimes ptimes.cpp prayertimes.hpp cmdline.c
