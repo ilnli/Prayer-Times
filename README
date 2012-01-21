@@ -9,7 +9,7 @@ Description:
 The program "ptimes" is a linux daemon which waits for the next prayer 
 and sounds Azan when it's time for it.
 
-User must specify the location in terms of langitude and longitude for 
+User must specify the location in terms of latitude and longitude for 
 which the Azan will be sounded on the correct time for that location.
 
 The program can be compiled as:
