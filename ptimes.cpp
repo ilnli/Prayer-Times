@@ -269,7 +269,7 @@ void daemonize(void) {
 #else
     int daemonize = 1;
 #endif
- 
+
     /* Setup signal handling before we start */
     signal(SIGHUP, signal_handler);
     signal(SIGTERM, signal_handler);
@@ -285,13 +285,13 @@ void daemonize(void) {
     setlogmask(LOG_UPTO(LOG_INFO));
     openlog(DAEMON_NAME, LOG_CONS | LOG_PID, LOG_USER);
 #endif
- 
+
     /* Our process ID and Session ID */
     pid_t pid, sid;
- 
+
     if (daemonize) {
         syslog(LOG_INFO, "Starting the daemonizing process");
- 
+
         /* Fork off the parent process */
         pid = fork();
         if (pid < 0) {
@@ -302,17 +302,17 @@ void daemonize(void) {
         if (pid > 0) {
             exit(EXIT_SUCCESS);
         }
- 
+
         /* Change the file mode mask */
         umask(0);
- 
+
         /* Create a new SID for the child process */
         sid = setsid();
         if (sid < 0) {
             /* Log the failure */
             exit(EXIT_FAILURE);
         }
- 
+
         /* Change the current working directory */
         if ((chdir("/")) < 0) {
             /* Log the failure */
@@ -330,7 +330,7 @@ void daemonize(void) {
         }
         sprintf(buf, "%ld\n", (long) sid);
         write(lfd, buf, strlen(buf));
- 
+
         /* Close out the standard file descriptors */
         close(STDIN_FILENO);
         close(STDOUT_FILENO);
@@ -338,12 +338,11 @@ void daemonize(void) {
     }
 }
 
-
 int main(int argc, char *argv[])
 {
     int last_prayer = -1;
     PrayerTimes prayer_times;
-	time_t date = time(NULL);
+    time_t date = time(NULL);
     double timezone = NAN;
     prayer_t next_prayer;
 
@@ -352,13 +351,11 @@ int main(int argc, char *argv[])
 
     daemonize();
 
-	if (isnan(opts->timezone_arg))
-		timezone = PrayerTimes::get_effective_timezone(date);
-
+    if (isnan(opts->timezone_arg))
+        timezone = PrayerTimes::get_effective_timezone(date);
 
     syslog(LOG_INFO, "%s daemon starting up with parameters timezone=%.1lf, latitude=%.5lf, longitude=%.5lf", 
             DAEMON_NAME, opts->timezone_arg, opts->latitude_arg, opts->longitude_arg);
- 
  
     while(true) {
         if(get_next_prayer(&prayer_times, timezone, date, &next_prayer)) {
@@ -379,7 +376,7 @@ int main(int argc, char *argv[])
     }
 
     syslog(LOG_INFO, "%s daemon exiting", DAEMON_NAME);
- 
+
     cleanup();
     exit(0);
 }
