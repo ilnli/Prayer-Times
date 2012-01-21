@@ -20,7 +20,7 @@ The daemon can be started as:
 
 ./ptimes -n <longitude> -l <latitude> --calc-method mwl
 
-Run with -h for help
+Run with -h for help:
 
 ./ptimes -h
 
