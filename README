@@ -1,8 +1,10 @@
-==Introduction:==
+Introduction:
+=============
 
 Muslim prayer times alert program
 
 Description:
+============
 
 The program "ptimes" is a linux daemon which waits for the next prayer 
 and plays Azan when it's time for it.
