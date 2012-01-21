@@ -36,6 +36,8 @@
 
 #define SECONDSINDAY 86400
 
+#define NODEBUG /* change to DEBUG for debugging */
+
 #define _free(p) \
     do { if (p) { free(p); p=0; } } while (0)
 
@@ -62,6 +64,7 @@ typedef struct _prayer {
 } prayer_t;
 
 void signal_handler(int sig) {
+    exit(1);
     switch(sig) {
         case SIGHUP:
             syslog(LOG_WARNING, "Received SIGHUP signal.");
@@ -226,17 +229,16 @@ int get_next_prayer(PrayerTimes *prayer_times, double timezone, time_t date, pra
 
         prayer_times->get_prayer_times(date, opts->latitude_arg, opts->longitude_arg, timezone, times);
         for (int i = 0; i < PrayerTimes::TimesCount; i++) {
-            time_of_day = PrayerTimes::float_time_to_epoch(times[i], date);
+            /* Skip time for Sunrise (1) and Sunset (4) */
+            if (i == 1 || i == 4)
+                i++;
 
-            if((now <= time_of_day)) {
+            time_of_day = PrayerTimes::float_time_to_epoch(times[i], date);
+            if((now <= time_of_day && time_of_day != -1)) {
                 prayer->name_id = i;
                 prayer->minutes = (time_of_day - now) / 60;
                 return 1;
             }
-
-            /* Skip time for Sunrise (1) and Sunset (4) */
-            if (i == 1 || i == 4)
-                i++;
         }
     }
     return 0;

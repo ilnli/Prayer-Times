@@ -245,11 +245,12 @@ public:
         time_t now;
 		int hours, minutes;
 
-		get_float_time_parts(time, hours, minutes);
-		const char* suffix = hours >= 12 ? " PM" : " AM";
-		hours = (hours + 12 - 1) % 12 + 1;
+        if(isnan(time)) {
+            return -1;
+        }
 
         struct tm* brokentime = localtime(&date);
+        get_float_time_parts(time, hours, minutes);
         brokentime->tm_hour = hours;
         brokentime->tm_min = minutes;
         brokentime->tm_sec = 0;
