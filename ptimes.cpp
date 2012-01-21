@@ -290,7 +290,7 @@ void daemonize(void) {
     pid_t pid, sid;
  
     if (daemonize) {
-        syslog(LOG_INFO, "starting the daemonizing process");
+        syslog(LOG_INFO, "Starting the daemonizing process");
  
         /* Fork off the parent process */
         pid = fork();
