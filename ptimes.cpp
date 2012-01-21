@@ -360,7 +360,9 @@ int main(int argc, char *argv[])
  
     while(true) {
         if(get_next_prayer(&prayer_times, timezone, date, &next_prayer)) {
-            syslog(LOG_INFO, "%s will be in %d minutes", TimeName[next_prayer.name_id], next_prayer.minutes);
+            if(next_prayer.minutes != 0) {
+                syslog(LOG_INFO, "%s will be in %d minutes", TimeName[next_prayer.name_id], next_prayer.minutes);
+            }
             /* 
              * Wait till next prayer and if it's time for prayer sleep for 
              * 1 second, so that we don't start utilizing too much CPU.
