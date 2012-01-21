@@ -341,8 +341,6 @@ void daemonize(void) {
 
 int main(int argc, char *argv[])
 {
-    daemonize();
-
     int last_prayer = -1;
     PrayerTimes prayer_times;
 	time_t date = time(NULL);
@@ -351,6 +349,8 @@ int main(int argc, char *argv[])
 
     parse_cmdline(argc, argv);
     set_prayer_options(&prayer_times, &date, &timezone);
+
+    daemonize();
 
 	if (isnan(opts->timezone_arg))
 		timezone = PrayerTimes::get_effective_timezone(date);

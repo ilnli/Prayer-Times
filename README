@@ -1,0 +1,55 @@
+==Introduction:==
+
+Muslim prayer times alert program
+
+Description:
+
+The program "ptimes" is a linux daemon which waits for the next prayer 
+and plays Azan when it's time for it.
+
+User must specify the location in terms of langitude and longitude for 
+which the Azan will be sounded on the correct time for that location.
+
+The program can be compiled as:
+
+g++ -o ptimes ptimes.cpp prayertimes.hpp cmdline.c
+
+The daemon can be started as:
+
+./ptimes -n <longitude> -l <latitude> --calc-method mwl
+
+Run with -h for help
+
+./ptimes -h
+
+ptimes 1.0
+
+Islamic prayer times calculator
+
+Usage: ptimes [OPTIONS]... [FILES]...
+
+  -h, --help                    Print help and exit
+  -V, --version                 Print version and exit
+  -z, --timezone=FLOAT          get prayer times for arbitrary timezone
+  -l, --latitude=FLOAT          latitude of desired location
+  -n, --longitude=FLOAT         longitude of desired location
+  -c, --calc-method=STRING      select prayer time calculation method
+                                  (possible values="jafari", "karachi",
+                                  "isna", "mwl", "makkah", "egypt",
+                                  "custom")
+  -a, --asr-juristic-method=STRING
+                                select Juristic method for calculating Asr
+                                  prayer time  (possible values="shafii",
+                                  "hanafi")
+  -i, --high-lats-method=STRING select adjusting method for higher latituden
+                                  (possible values="none", "midnight",
+                                  "oneseventh", "anglebased")
+      --dhuhr-minutes=INT       minutes after mid-way for calculating Dhuhr
+                                  prayer time
+      --maghrib-minutes=INT     minutes after sunset for calculating Maghrib
+                                  prayer time
+      --isha-minutes=INT        minutes after Maghrib for calculating Isha
+                                  prayer time
+      --fajr-angle=INT          angle for calculating Fajr prayer time
+      --maghrib-angle=INT       angle for calculating Maghrib prayer time
+      --isha-angle=INT          angle for calculating Isha prayer time
