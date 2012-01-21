@@ -328,7 +328,7 @@ void daemonize(void) {
             syslog(LOG_INFO, DAEMON_NAME" is already running, exiting");
             exit(EXIT_FAILURE);
         }
-        sprintf(buf, "%ld\n", (long) pid);
+        sprintf(buf, "%ld\n", (long) sid);
         write(lfd, buf, strlen(buf));
  
         /* Close out the standard file descriptors */
