@@ -357,14 +357,15 @@ int main(int argc, char *argv[])
     if (isnan(opts->timezone_arg))
         timezone = PrayerTimes::get_effective_timezone(date);
 
-    syslog(LOG_INFO, "%s daemon starting up with parameters timezone=%.1lf, latitude=%.5lf, longitude=%.5lf", 
-            DAEMON_NAME, opts->timezone_arg, opts->latitude_arg, opts->longitude_arg);
+    syslog(LOG_INFO, 
+        "%s daemon starting up with parameters timezone=%.1lf, latitude=%.5lf, longitude=%.5lf", 
+        DAEMON_NAME, opts->timezone_arg, opts->latitude_arg, opts->longitude_arg);
  
     while(true) {
         if(get_next_prayer(&prayer_times, timezone, date, &next_prayer)) {
             if(next_prayer.minutes != 0) {
-                syslog(LOG_INFO, "%s will be in %d minutes at %s", TimeName[next_prayer.name_id], next_prayer.minutes, \
-                    next_prayer.time24);
+                syslog(LOG_INFO, "%s will be in %d minutes at %s", TimeName[next_prayer.name_id], 
+                    next_prayer.minutes, next_prayer.time24);
             }
             /* 
              * Wait till next prayer and if it's time for prayer sleep for 
