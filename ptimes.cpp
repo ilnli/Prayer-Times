@@ -366,12 +366,15 @@ int main(int argc, char *argv[])
             if(next_prayer.minutes != 0) {
                 syslog(LOG_INFO, "%s will be in %d minutes at %s", TimeName[next_prayer.name_id], 
                     next_prayer.minutes, next_prayer.time24);
+
+                /* Wait till next prayer */
+                sleep(next_prayer.minutes*60);
+            } else {
+                /* If it's time for prayer then sleep for 1 second, 
+                 * so that we don't start utilizing too much CPU.
+                 */
+                sleep(1);
             }
-            /* 
-             * Wait till next prayer and if it's time for prayer sleep for 
-             * 1 second, so that we don't start utilizing too much CPU.
-             */
-            next_prayer.minutes == 0 ? sleep(1) : sleep(next_prayer.minutes*60);
 
             /* Make sure we don't keep on alerting for same prayer in the loop */
             if(last_prayer != next_prayer.name_id) {
