@@ -354,7 +354,7 @@ int main(int argc, char *argv[])
 
     daemonize();
 
-    if (isnan(opts->timezone_arg))
+    if (!opts->timezone_given)
         timezone = PrayerTimes::get_effective_timezone(date);
 
     syslog(LOG_INFO, 
