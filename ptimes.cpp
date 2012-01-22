@@ -61,6 +61,7 @@ static const char* TimeName[] =
 typedef struct _prayer {
     char name_id;
     int minutes;
+    char time24[6];
 } prayer_t;
 
 void signal_handler(int sig) {
@@ -236,6 +237,7 @@ int get_next_prayer(PrayerTimes *prayer_times, double timezone, time_t date, pra
             if((now <= time_of_day && time_of_day != -1)) {
                 prayer->name_id = i;
                 prayer->minutes = (time_of_day - now) / 60;
+                strcpy(prayer->time24, PrayerTimes::float_time_to_time24(times[i]).c_str());
                 return 1;
             }
         }
@@ -361,7 +363,8 @@ int main(int argc, char *argv[])
     while(true) {
         if(get_next_prayer(&prayer_times, timezone, date, &next_prayer)) {
             if(next_prayer.minutes != 0) {
-                syslog(LOG_INFO, "%s will be in %d minutes", TimeName[next_prayer.name_id], next_prayer.minutes);
+                syslog(LOG_INFO, "%s will be in %d minutes at %s", TimeName[next_prayer.name_id], next_prayer.minutes, \
+                    next_prayer.time24);
             }
             /* 
              * Wait till next prayer and if it's time for prayer sleep for 
