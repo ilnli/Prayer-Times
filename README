@@ -25,8 +25,6 @@ The daemon can be started as:
 
 Run with -h for help:
 
-./ptimes -h
-
 ptimes 1.0
 
 Islamic prayer times calculator
@@ -35,7 +33,6 @@ Usage: ptimes [OPTIONS]... [FILES]...
 
   -h, --help                    Print help and exit
   -V, --version                 Print version and exit
-  -z, --timezone=FLOAT          get prayer times for arbitrary timezone
   -l, --latitude=FLOAT          latitude of desired location
   -n, --longitude=FLOAT         longitude of desired location
   -c, --calc-method=STRING      select prayer time calculation method
@@ -58,3 +55,4 @@ Usage: ptimes [OPTIONS]... [FILES]...
       --fajr-angle=INT          angle for calculating Fajr prayer time
       --maghrib-angle=INT       angle for calculating Maghrib prayer time
       --isha-angle=INT          angle for calculating Isha prayer time
+
