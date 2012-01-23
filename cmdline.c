@@ -34,7 +34,6 @@ const char *gengetopt_args_info_description = "";
 const char *gengetopt_args_info_help[] = {
   "  -h, --help                    Print help and exit",
   "  -V, --version                 Print version and exit",
-  "  -z, --timezone=FLOAT          get prayer times for arbitrary timezone",
   "  -l, --latitude=FLOAT          latitude of desired location",
   "  -n, --longitude=FLOAT         longitude of desired location",
   "  -c, --calc-method=STRING      select prayer time calculation method  \n                                  (possible values=\"jafari\", \"karachi\", \n                                  \"isna\", \"mwl\", \"makkah\", \"egypt\", \n                                  \"custom\")",
@@ -103,7 +102,6 @@ void clear_given (struct gengetopt_args_info *args_info)
 {
   args_info->help_given = 0 ;
   args_info->version_given = 0 ;
-  args_info->timezone_given = 0 ;
   args_info->latitude_given = 0 ;
   args_info->longitude_given = 0 ;
   args_info->calc_method_given = 0 ;
@@ -121,7 +119,6 @@ static
 void clear_args (struct gengetopt_args_info *args_info)
 {
   FIX_UNUSED (args_info);
-  args_info->timezone_orig = NULL;
   args_info->latitude_orig = NULL;
   args_info->longitude_orig = NULL;
   args_info->calc_method_arg = NULL;
@@ -146,18 +143,17 @@ void init_args_info(struct gengetopt_args_info *args_info)
 
   args_info->help_help = gengetopt_args_info_help[0] ;
   args_info->version_help = gengetopt_args_info_help[1] ;
-  args_info->timezone_help = gengetopt_args_info_help[2] ;
-  args_info->latitude_help = gengetopt_args_info_help[3] ;
-  args_info->longitude_help = gengetopt_args_info_help[4] ;
-  args_info->calc_method_help = gengetopt_args_info_help[5] ;
-  args_info->asr_juristic_method_help = gengetopt_args_info_help[6] ;
-  args_info->high_lats_method_help = gengetopt_args_info_help[7] ;
-  args_info->dhuhr_minutes_help = gengetopt_args_info_help[8] ;
-  args_info->maghrib_minutes_help = gengetopt_args_info_help[9] ;
-  args_info->isha_minutes_help = gengetopt_args_info_help[10] ;
-  args_info->fajr_angle_help = gengetopt_args_info_help[11] ;
-  args_info->maghrib_angle_help = gengetopt_args_info_help[12] ;
-  args_info->isha_angle_help = gengetopt_args_info_help[13] ;
+  args_info->latitude_help = gengetopt_args_info_help[2] ;
+  args_info->longitude_help = gengetopt_args_info_help[3] ;
+  args_info->calc_method_help = gengetopt_args_info_help[4] ;
+  args_info->asr_juristic_method_help = gengetopt_args_info_help[5] ;
+  args_info->high_lats_method_help = gengetopt_args_info_help[6] ;
+  args_info->dhuhr_minutes_help = gengetopt_args_info_help[7] ;
+  args_info->maghrib_minutes_help = gengetopt_args_info_help[8] ;
+  args_info->isha_minutes_help = gengetopt_args_info_help[9] ;
+  args_info->fajr_angle_help = gengetopt_args_info_help[10] ;
+  args_info->maghrib_angle_help = gengetopt_args_info_help[11] ;
+  args_info->isha_angle_help = gengetopt_args_info_help[12] ;
   
 }
 
@@ -241,7 +237,6 @@ static void
 cmdline_parser_release (struct gengetopt_args_info *args_info)
 {
   unsigned int i;
-  free_string_field (&(args_info->timezone_orig));
   free_string_field (&(args_info->latitude_orig));
   free_string_field (&(args_info->longitude_orig));
   free_string_field (&(args_info->calc_method_arg));
@@ -336,8 +331,6 @@ cmdline_parser_dump(FILE *outfile, struct gengetopt_args_info *args_info)
     write_into_file(outfile, "help", 0, 0 );
   if (args_info->version_given)
     write_into_file(outfile, "version", 0, 0 );
-  if (args_info->timezone_given)
-    write_into_file(outfile, "timezone", args_info->timezone_orig, 0);
   if (args_info->latitude_given)
     write_into_file(outfile, "latitude", args_info->latitude_orig, 0);
   if (args_info->longitude_given)
@@ -661,7 +654,6 @@ cmdline_parser_internal (
       static struct option long_options[] = {
         { "help",	0, NULL, 'h' },
         { "version",	0, NULL, 'V' },
-        { "timezone",	1, NULL, 'z' },
         { "latitude",	1, NULL, 'l' },
         { "longitude",	1, NULL, 'n' },
         { "calc-method",	1, NULL, 'c' },
@@ -676,7 +668,7 @@ cmdline_parser_internal (
         { 0,  0, 0, 0 }
       };
 
-      c = getopt_long (argc, argv, "hVz:l:n:c:a:i:", long_options, &option_index);
+      c = getopt_long (argc, argv, "hVl:n:c:a:i:", long_options, &option_index);
 
       if (c == -1) break;	/* Exit from `while (1)' loop.  */
 
@@ -692,18 +684,6 @@ cmdline_parser_internal (
           cmdline_parser_free (&local_args_info);
           exit (EXIT_SUCCESS);
 
-        case 'z':	/* get prayer times for arbitrary timezone.  */
-        
-        
-          if (update_arg( (void *)&(args_info->timezone_arg), 
-               &(args_info->timezone_orig), &(args_info->timezone_given),
-              &(local_args_info.timezone_given), optarg, 0, 0, ARG_FLOAT,
-              check_ambiguity, override, 0, 0,
-              "timezone", 'z',
-              additional_error))
-            goto failure;
-        
-          break;
         case 'l':	/* latitude of desired location.  */
         
         

@@ -2,7 +2,6 @@ package "ptimes"
 version "1.0"
 purpose "Islamic prayer times calculator"
 
-option "timezone" z "get prayer times for arbitrary timezone" float no
 option "latitude" l "latitude of desired location" float yes
 option "longitude" n "longitude of desired location" float yes
 option "calc-method" c "select prayer time calculation method" string no values="jafari","karachi","isna","mwl","makkah","egypt","custom"

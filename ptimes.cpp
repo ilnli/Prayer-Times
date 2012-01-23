@@ -36,7 +36,7 @@
 
 #define SECONDSINDAY 86400
 
-#define NODEBUG /* change to DEBUG for debugging */
+#define DEBUG /* change to DEBUG for debugging */
 
 #define _free(p) \
     do { if (p) { free(p); p=0; } } while (0)
@@ -60,7 +60,7 @@ static const char* TimeName[] =
 
 typedef struct _prayer {
     char name_id;
-    int minutes;
+    int seconds;
     char time24[6];
 } prayer_t;
 
@@ -163,13 +163,7 @@ static void parse_cmdline(int argc, char **argv)
     }
 }
 
-int set_prayer_options(PrayerTimes *prayer_times, time_t *date, double *timezone) {
-
-    if(opts->timezone_given) {            // --timezone
-        *timezone = opts->timezone_arg;
-    } else {
-        *timezone = prayer_times->get_effective_timezone(*date);
-    }
+int set_prayer_options(PrayerTimes *prayer_times) {
 
     if(opts->calc_method_given) {         // --calc-method
         if (strcmp(opts->calc_method_arg, "jafari") == 0)
@@ -217,26 +211,27 @@ int set_prayer_options(PrayerTimes *prayer_times, time_t *date, double *timezone
     return 0;
 }
 
-int get_next_prayer(PrayerTimes *prayer_times, double timezone, time_t date, prayer_t *prayer) {
-    time_t now, time_of_day;
+int get_next_prayer(PrayerTimes *prayer_times, prayer_t *prayer) {
+    time_t time_of_day, curr_time = time(NULL);
+    double timezone = NAN;
 	double times[PrayerTimes::TimesCount];
 
-    now = time(NULL);
+    timezone = PrayerTimes::get_effective_timezone(curr_time);
 
     /* Only check times between today and tomorrow otherwise give error */
-    for(int j = 0; j <= SECONDSINDAY; j += SECONDSINDAY) {
-        date = date + j;
-
-        prayer_times->get_prayer_times(date, opts->latitude_arg, opts->longitude_arg, timezone, times);
+    for(time_t j = curr_time; j <= curr_time + SECONDSINDAY; j += SECONDSINDAY) {
+        prayer_times->get_prayer_times(j, opts->latitude_arg, 
+            opts->longitude_arg, timezone, times);
         for (int i = 0; i < PrayerTimes::TimesCount; i++) {
             /* Skip time for Sunrise (1) and Sunset (4) */
             if (i == 1 || i == 4)
                 i++;
 
-            time_of_day = PrayerTimes::float_time_to_epoch(times[i], date);
-            if((now <= time_of_day && time_of_day != -1)) {
+            time_of_day = PrayerTimes::float_time_to_epoch(times[i], j);
+            if(time_of_day >= curr_time) {
                 prayer->name_id = i;
-                prayer->minutes = (time_of_day - now) / 60;
+                /* Also add the remaining seconds in current time for accuracy */
+                prayer->seconds = time_of_day - curr_time;
                 strcpy(prayer->time24, PrayerTimes::float_time_to_time24(times[i]).c_str());
                 return 1;
             }
@@ -345,30 +340,26 @@ int main(int argc, char *argv[])
 {
     int last_prayer = -1;
     PrayerTimes prayer_times;
-    time_t date = time(NULL);
-    double timezone = NAN;
     prayer_t next_prayer;
 
     parse_cmdline(argc, argv);
-    set_prayer_options(&prayer_times, &date, &timezone);
+    set_prayer_options(&prayer_times);
 
     daemonize();
 
-    if (!opts->timezone_given)
-        timezone = PrayerTimes::get_effective_timezone(date);
 
     syslog(LOG_INFO, 
-        "%s daemon starting up with parameters timezone=%.1lf, latitude=%.5lf, longitude=%.5lf", 
-        DAEMON_NAME, opts->timezone_arg, opts->latitude_arg, opts->longitude_arg);
+        "%s daemon starting up with parameters latitude=%.5lf, longitude=%.5lf", 
+        DAEMON_NAME, opts->latitude_arg, opts->longitude_arg);
  
     while(true) {
-        if(get_next_prayer(&prayer_times, timezone, date, &next_prayer)) {
-            if(next_prayer.minutes != 0) {
+        if(get_next_prayer(&prayer_times, &next_prayer)) {
+            if(next_prayer.seconds != 0) {
                 syslog(LOG_INFO, "%s will be in %d minutes at %s", TimeName[next_prayer.name_id], 
-                    next_prayer.minutes, next_prayer.time24);
+                    next_prayer.seconds/60, next_prayer.time24);
 
                 /* Wait till next prayer */
-                sleep(next_prayer.minutes*60);
+                sleep(next_prayer.seconds);
             } else {
                 /* If it's time for prayer then sleep for 1 second, 
                  * so that we don't start utilizing too much CPU.

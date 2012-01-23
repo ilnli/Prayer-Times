@@ -39,9 +39,6 @@ struct gengetopt_args_info
 {
   const char *help_help; /**< @brief Print help and exit help description.  */
   const char *version_help; /**< @brief Print version and exit help description.  */
-  float timezone_arg;	/**< @brief get prayer times for arbitrary timezone.  */
-  char * timezone_orig;	/**< @brief get prayer times for arbitrary timezone original value given at command line.  */
-  const char *timezone_help; /**< @brief get prayer times for arbitrary timezone help description.  */
   float latitude_arg;	/**< @brief latitude of desired location.  */
   char * latitude_orig;	/**< @brief latitude of desired location original value given at command line.  */
   const char *latitude_help; /**< @brief latitude of desired location help description.  */
@@ -78,7 +75,6 @@ struct gengetopt_args_info
   
   unsigned int help_given ;	/**< @brief Whether help was given.  */
   unsigned int version_given ;	/**< @brief Whether version was given.  */
-  unsigned int timezone_given ;	/**< @brief Whether timezone was given.  */
   unsigned int latitude_given ;	/**< @brief Whether latitude was given.  */
   unsigned int longitude_given ;	/**< @brief Whether longitude was given.  */
   unsigned int calc_method_given ;	/**< @brief Whether calc-method was given.  */
