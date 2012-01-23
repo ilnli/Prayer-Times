@@ -230,7 +230,6 @@ int get_next_prayer(PrayerTimes *prayer_times, prayer_t *prayer) {
             time_of_day = PrayerTimes::float_time_to_epoch(times[i], j);
             if(time_of_day >= curr_time) {
                 prayer->name_id = i;
-                /* Also add the remaining seconds in current time for accuracy */
                 prayer->seconds = time_of_day - curr_time;
                 strcpy(prayer->time24, PrayerTimes::float_time_to_time24(times[i]).c_str());
                 return 1;
