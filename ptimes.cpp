@@ -348,7 +348,7 @@ int main(int argc, char *argv[])
 
 
     syslog(LOG_INFO, 
-        "%s daemon starting up with parameters latitude=%.5lf, longitude=%.5lf", 
+        "%s daemon started with parameters latitude=%.5lf, longitude=%.5lf", 
         DAEMON_NAME, opts->latitude_arg, opts->longitude_arg);
  
     while(true) {
