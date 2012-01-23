@@ -36,7 +36,7 @@
 
 #define SECONDSINDAY 86400
 
-#define DEBUG /* change to DEBUG for debugging */
+#define NODEBUG /* change to DEBUG for debugging */
 
 #define _free(p) \
     do { if (p) { free(p); p=0; } } while (0)
