@@ -246,8 +246,8 @@ void play_azan() {
             exit(EXIT_FAILURE);
             break;
         case 0:
-            syslog(LOG_INFO, "Forking azan player");
             /* child process */
+            syslog(LOG_INFO, "Forking azan player");
             execl(PLAYER, DAEMON_NAME"Player", AZAN, (char *) 0);
             exit(EXIT_SUCCESS);
             break;
@@ -268,6 +268,7 @@ void daemonize(void) {
 #endif
 
     /* Setup signal handling before we start */
+    signal(SIGCHLD, SIG_IGN);
     signal(SIGHUP, signal_handler);
     signal(SIGTERM, signal_handler);
     signal(SIGINT, signal_handler);
