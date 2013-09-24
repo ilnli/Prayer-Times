@@ -23,6 +23,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 
 #include "cmdline.h"
 #include "prayertimes.hpp"
@@ -71,6 +72,7 @@ void signal_handler(int sig) {
             break;
         case SIGTERM:
             syslog(LOG_WARNING, "Received SIGTERM signal.");
+            exit(EXIT_SUCCESS);
             break;
         default:
             syslog(LOG_WARNING, "Unhandled signal (%d) %s", strsignal(sig));
