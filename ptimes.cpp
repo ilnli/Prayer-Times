@@ -32,7 +32,7 @@
 #define PID_FILE "/var/run/ptimes.pid"
 #define BUF_SIZE 256
 
-#define PLAYER "/usr/bin/alsaplayer"
+#define PLAYER "/usr/bin/aplay"
 #define AZAN "/root/programs/ptimes/audio/Amazing-Azan.wav"
 
 #define SECONDSINDAY 86400
