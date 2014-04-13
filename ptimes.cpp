@@ -250,7 +250,7 @@ void play_azan() {
         case 0:
             /* child process */
             syslog(LOG_INFO, "Forking azan player");
-            execl(PLAYER, DAEMON_NAME"Player", AZAN, (char *) 0);
+            execl(PLAYER, "aplay", AZAN, (char *) 0);
             exit(EXIT_SUCCESS);
             break;
         default:
