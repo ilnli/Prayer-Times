@@ -33,7 +33,7 @@
 #define BUF_SIZE 256
 
 #define PLAYER "/usr/bin/aplay"
-#define AZAN "/root/programs/ptimes/audio/Amazing-Azan.wav"
+#define AZAN "/usr/share/sounds/ptimes/azan.wav"
 
 #define SECONDSINDAY 86400
 
