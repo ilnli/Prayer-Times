@@ -1,0 +1,58 @@
+#!/bin/bash
+#
+# /etc/rc.d/init.d/ptimes
+#	
+#
+# chkconfig: 2345 98 25
+# description: Start PrayerTimes daemon
+# processname: ptime
+# pidfile /var/run/ptimes.pid
+
+# Source function library.
+. /etc/init.d/functions
+
+# Source monit configuration.                                                                                                                                              
+if [ -f /etc/sysconfig/ptimes ] ; then
+	. /etc/sysconfig/ptimes
+fi
+
+PTIMES=/usr/bin/ptimes
+
+RETVAL=0
+
+start() {
+	echo -n "Starting ptimes: "
+	daemon $PTIMES $OPTS
+	RETVAL=$?
+	[ $RETVAL = 0 ] && touch /var/lock/subsys/ptimes
+	return $RETVAL 
+}	
+
+stop() {
+	echo -n "Shutting down ptimes: "
+	killproc ptimes
+	RETVAL=$?
+	[ $RETVAL = 0 ] && rm -f /var/lock/subsys/ptimes
+	return $RETVAL 
+}
+
+case "$1" in
+    start)
+	start
+	;;
+    stop)
+	stop
+	;;
+    status)
+	status ptimes
+	;;
+    restart)
+    	stop
+	start
+	;;
+    *)
+	echo "Usage: ptimes {start|stop|status|restart}"
+	exit 1
+	;;
+esac
+exit $?
