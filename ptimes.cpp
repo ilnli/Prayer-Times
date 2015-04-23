@@ -209,6 +209,24 @@ int set_prayer_options(PrayerTimes *prayer_times) {
         else if (strcmp(opts->high_lats_method_arg, "anglebased") == 0)
             prayer_times->set_high_lats_adjust_method(PrayerTimes::AngleBased);
     }
+    if(opts->dhuhr_minutes_given) {
+        prayer_times->set_dhuhr_minutes(opts->dhuhr_minutes_arg);
+    }
+    if(opts->maghrib_minutes_given) {
+        prayer_times->set_maghrib_minutes(opts->maghrib_minutes_arg);
+    }
+    if(opts->isha_minutes_given) {
+        prayer_times->set_isha_minutes(opts->isha_minutes_arg);
+    }
+    if(opts->fajr_angle_given) {
+        prayer_times->set_fajr_angle(opts->fajr_angle_arg);
+    }
+    if(opts->maghrib_angle_given) {
+        prayer_times->set_maghrib_angle(opts->maghrib_angle_arg);
+    }
+    if(opts->isha_angle_given) {
+        prayer_times->set_isha_angle(opts->isha_angle_arg);
+    }
 
     return 0;
 }
