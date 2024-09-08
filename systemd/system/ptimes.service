@@ -1,0 +1,12 @@
+[Unit]
+Description=Prayer Time Alarm
+After=network.target
+
+[Service]
+EnvironmentFile=/etc/sysconfig/ptimes
+ExecStart=sh -c "/usr/bin/ptimes $OPTS"
+Type=forking
+PIDFile=/run/ptimes.pid
+
+[Install]
+WantedBy=default.target
