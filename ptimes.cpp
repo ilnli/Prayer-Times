@@ -29,7 +29,7 @@
 #include "prayertimes.hpp"
 
 #define DAEMON_NAME "ptimes"
-#define PID_FILE "/var/run/ptimes.pid"
+#define PID_FILE "/run/ptimes.pid"
 #define BUF_SIZE 256
 
 #define PLAYER "/usr/bin/aplay"

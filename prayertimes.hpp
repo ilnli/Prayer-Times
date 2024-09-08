@@ -233,7 +233,7 @@ public:
     /* convert float hours to 24h format */
     static std::string float_time_to_time24(double time)
     {
-        if (isnan(time))
+        if (std::isnan(time))
             return std::string();
         int hours, minutes;
         get_float_time_parts(time, hours, minutes);
@@ -245,7 +245,7 @@ public:
         time_t now;
         int hours, minutes;
 
-        if(isnan(time)) {
+        if(std::isnan(time)) {
             return -1;
         }
 
@@ -260,7 +260,7 @@ public:
     /* convert float hours to 12h format */
     static std::string float_time_to_time12(double time, bool no_suffix = false)
     {
-        if (isnan(time))
+        if (std::isnan(time))
             return std::string();
         int hours, minutes;
         get_float_time_parts(time, hours, minutes);
@@ -449,19 +449,19 @@ private:
 
         // Adjust Fajr
         double fajr_diff = night_portion(method_params[calc_method].fajr_angle) * night_time;
-        if (isnan(times[Fajr]) || time_diff(times[Fajr], times[Sunrise]) > fajr_diff)
+        if (std::isnan(times[Fajr]) || time_diff(times[Fajr], times[Sunrise]) > fajr_diff)
             times[Fajr] = times[Sunrise] - fajr_diff;
 
         // Adjust Isha
         double isha_angle = method_params[calc_method].isha_is_minutes ? 18.0 : method_params[calc_method].isha_value;
         double isha_diff = night_portion(isha_angle) * night_time;
-        if (isnan(times[Isha]) || time_diff(times[Sunset], times[Isha]) > isha_diff)
+        if (std::isnan(times[Isha]) || time_diff(times[Sunset], times[Isha]) > isha_diff)
             times[Isha] = times[Sunset] + isha_diff;
 
         // Adjust Maghrib
         double maghrib_angle = method_params[calc_method].maghrib_is_minutes ? 4.0 : method_params[calc_method].maghrib_value;
         double maghrib_diff = night_portion(maghrib_angle) * night_time;
-        if (isnan(times[Maghrib]) || time_diff(times[Sunset], times[Maghrib]) > maghrib_diff)
+        if (std::isnan(times[Maghrib]) || time_diff(times[Sunset], times[Maghrib]) > maghrib_diff)
             times[Maghrib] = times[Sunset] + maghrib_diff;
     }
 
